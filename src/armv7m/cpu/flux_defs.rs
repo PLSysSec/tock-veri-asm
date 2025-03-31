@@ -9,13 +9,14 @@ const U32_MAX: u32 = std::u32::MAX;
 flux_rs::defs! {
 
     fn cpu_post_exception_entry(cpu: Armv7m, exception_num: int) -> Armv7m {
+        let sp_post_exc_entry = sp_post_exception_entry(cpu);
         Armv7m {
             mode: handler_mode(),
             control: control_post_exception_entry(cpu),
             psr: psr_post_exception_entry(cpu, exception_num),
             lr: lr_post_exception_entry(cpu, cpu.control),
-            sp: sp_post_exception_entry(cpu),
-            mem: mem_post_exception_entry(get_sp(sp_post_exception_entry(cpu), cpu.mode, cpu.control), cpu),
+            sp: sp_post_exc_entry,
+            mem: mem_post_exception_entry(get_sp(sp_post_exc_entry, cpu.mode, cpu.control), cpu),
             ..cpu
         }
     }
@@ -33,24 +34,26 @@ flux_rs::defs! {
     }
 
     fn cpu_post_exception_exit(cpu: Armv7m, return_exec: BV32) -> Armv7m {
+        let sp_from_isr_ret = get_sp_from_isr_ret(cpu.sp, return_exec);
         Armv7m {
             mode: thread_mode(),
             control: Control { spsel: return_exec != bv32(0xFFFF_FFF9), ..cpu.control },
-            general_regs: gprs_post_exception_exit(get_sp_from_isr_ret(cpu.sp, return_exec), cpu),
-            lr: get_mem_addr(bv_add(get_sp_from_isr_ret(cpu.sp, return_exec), bv32( 0x14)), cpu.mem),
-            psr: get_mem_addr(bv_add(get_sp_from_isr_ret(cpu.sp, return_exec), bv32(0x1C)), cpu.mem),
+            general_regs: gprs_post_exception_exit(sp_from_isr_ret, cpu),
+            lr: get_mem_addr(bv_add(sp_from_isr_ret, bv32( 0x14)), cpu.mem),
+            psr: get_mem_addr(bv_add(sp_from_isr_ret, bv32(0x1C)), cpu.mem),
             sp: sp_post_exception_exit(cpu.sp, return_exec),
             ..cpu
         }
     }
 
     fn cpu_post_preempt(cpu: Armv7m, exception_num: int) -> Armv7m {
+        let cpu_post_exc_entry = cpu_post_exception_entry(cpu, exception_num);
         cpu_post_exception_exit(
             cpu_post_run_isr(
-                cpu_post_exception_entry(cpu, exception_num),
+                cpu_post_exc_entry,
                 exception_num
             ),
-            get_bx_from_exception_num(exception_num, get_lr_direct(cpu_post_exception_entry(cpu, exception_num)))
+            get_bx_from_exception_num(exception_num, get_lr_direct(cpu_post_exc_entry))
         )
     }
 
@@ -371,6 +374,7 @@ flux_rs::defs! {
         rm7: int,
         rm8: int
     ) -> Map<GPR, BV32> {
+        let gpr = get_gpr(rd, cpu);
         map_set(
             map_set(
                 map_set(
@@ -381,28 +385,28 @@ flux_rs::defs! {
                                     map_set(
                                         cpu.general_regs,
                                         rm1,
-                                        get_mem_addr(get_gpr(rd, cpu), cpu.mem)
+                                        get_mem_addr(gpr, cpu.mem)
                                     ),
                                     rm2,
-                                    get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0x4)), cpu.mem)
+                                    get_mem_addr(bv_add(gpr, bv32(0x4)), cpu.mem)
                                 ),
                                 rm3,
-                                get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0x8)), cpu.mem)
+                                get_mem_addr(bv_add(gpr, bv32(0x8)), cpu.mem)
                             ),
                             rm4,
-                            get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0xc)), cpu.mem)
+                            get_mem_addr(bv_add(gpr, bv32(0xc)), cpu.mem)
                         ),
                         rm5,
-                        get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0x10)), cpu.mem)
+                        get_mem_addr(bv_add(gpr, bv32(0x10)), cpu.mem)
                     ),
                     rm6,
-                    get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0x14)), cpu.mem)
+                    get_mem_addr(bv_add(gpr, bv32(0x14)), cpu.mem)
                 ),
                 rm7,
-                get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0x18)), cpu.mem)
+                get_mem_addr(bv_add(gpr, bv32(0x18)), cpu.mem)
             ),
             rm8,
-            get_mem_addr(bv_add(get_gpr(rd, cpu), bv32(0x1c)), cpu.mem)
+            get_mem_addr(bv_add(gpr, bv32(0x1c)), cpu.mem)
         )
     }
 
@@ -413,18 +417,19 @@ flux_rs::defs! {
         rm2: int,
         rm3: int,
     ) -> Map<GPR, BV32> {
+        let special_reg = get_special_reg(rd, cpu);
         map_set(
             map_set(
                 map_set(
                     cpu.general_regs,
                     rm1,
-                    get_mem_addr(get_special_reg(rd, cpu), cpu.mem)
+                    get_mem_addr(special_reg, cpu.mem)
                 ),
                 rm2,
-                get_mem_addr(bv_add(get_special_reg(rd, cpu), bv32(0x4)), cpu.mem)
+                get_mem_addr(bv_add(special_reg, bv32(0x4)), cpu.mem)
             ),
             rm3,
-            get_mem_addr(bv_add(get_special_reg(rd, cpu), bv32(0x8)), cpu.mem)
+            get_mem_addr(bv_add(special_reg, bv32(0x8)), cpu.mem)
         )
     }
 
@@ -484,30 +489,30 @@ flux_rs::defs! {
     }
 
     fn switch_to_user_pt1_reg_restores_precondition(cpu: Armv7m) -> bool {
-        is_valid_ram_addr(get_gpr(r0(), cpu))
+        let gpr0 = get_gpr(r0(), cpu);
+        let gpr1 = get_gpr(r1(), cpu);
+        is_valid_ram_addr(gpr0)
         &&
-        is_valid_ram_addr(bv_add(get_gpr(r0(), cpu), bv32(0x20)))
+        is_valid_ram_addr(bv_add(gpr0, bv32(0x20)))
         &&
-        is_valid_ram_addr(get_gpr(r1(), cpu))
+        is_valid_ram_addr(gpr1)
         &&
-        is_valid_ram_addr(bv_add(get_gpr(r1(), cpu), bv32(0x1c)))
+        is_valid_ram_addr(bv_add(gpr1, bv32(0x1c)))
     }
 
     fn switch_to_user_pt1_precondition(cpu: Armv7m) -> bool {
+        let save_clobbers = cpu_post_switch_to_user_pt1_save_clobbers(cpu);
+        let restores = cpu_post_switch_to_user_pt1_reg_restores(save_clobbers);
         switch_to_user_pt1_save_clobbers_precondition(cpu)
         &&
         switch_to_user_pt1_reg_restores_precondition(cpu)
         &&
         sp_can_handle_exception_entry(
-            cpu_post_switch_to_user_pt1_reg_restores(
-                cpu_post_switch_to_user_pt1_save_clobbers(cpu)
-            )
+            restores
         )
         &&
         sp_can_handle_preempt_exception_exit(
-            cpu_post_switch_to_user_pt1_reg_restores(
-                cpu_post_switch_to_user_pt1_save_clobbers(cpu)
-            ),
+            restores,
             11
         )
     }
@@ -603,9 +608,10 @@ flux_rs::defs! {
 
     fn switch_to_user_pt2_save_registers_precondition(cpu: Armv7m) -> bool {
         // need r1 to be valid store
-        is_valid_ram_addr(get_gpr(r1(), cpu))
+        let gpr = get_gpr(r1(), cpu);
+        is_valid_ram_addr(gpr)
         &&
-        is_valid_ram_addr(bv_add(get_gpr(r1(), cpu), bv32(0x1c)))
+        is_valid_ram_addr(bv_add(gpr, bv32(0x1c)))
     }
 
     fn switch_to_user_pt2_restore_clobbers_precondition(cpu: Armv7m) -> bool {
@@ -723,12 +729,13 @@ flux_rs::defs! {
 
     fn sp_can_handle_exception_entry(cpu: Armv7m) -> bool {
         // requires we have enough space to push 8 x 4 byte values into mem
+        let sp = get_sp(cpu.sp, cpu.mode, cpu.control);
         is_valid_ram_addr(
-            get_sp(cpu.sp, cpu.mode, cpu.control)
+            sp
         )
         &&
         is_valid_ram_addr(
-            bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x20))
+            bv_sub(sp, bv32(0x20))
         )
     }
 
@@ -876,9 +883,10 @@ flux_rs::defs! {
     }
 
     fn pop_spr_get_mem_addr_and_incr_precondition(cpu: Armv7m) -> bool {
-        is_valid_ram_addr(get_sp(cpu.sp, cpu.mode, cpu.control))
+        let sp = get_sp(cpu.sp, cpu.mode, cpu.control);
+        is_valid_ram_addr(sp)
         &&
-        is_valid_ram_addr(bv_add(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x4)))
+        is_valid_ram_addr(bv_add(sp, bv32(0x4)))
     }
 
     fn pop_spr_update_reg_precondition(cpu: Armv7m, reg: int, val: BV32) -> bool {
@@ -918,22 +926,24 @@ flux_rs::defs! {
         r2: int,
         r3: int,
     ) -> Map<BV32, BV32> {
+        let special_reg = get_special_reg(rd, cpu);
         map_set(
             map_set(
                 map_set(
                     cpu.mem,
-                    bv_sub(get_special_reg(rd, cpu), bv32(0xc)),
+                    bv_sub(special_reg, bv32(0xc)),
                     get_gpr(r1, cpu)
                 ),
-                bv_sub(get_special_reg(rd, cpu), bv32(0x8)),
+                bv_sub(special_reg, bv32(0x8)),
                 get_gpr(r2, cpu)
             ),
-            bv_sub(get_special_reg(rd, cpu), bv32(0x4)),
+            bv_sub(special_reg, bv32(0x4)),
             get_gpr(r3, cpu)
         )
     }
 
     fn cpu_post_pop(cpu: Armv7m, r1: int, r2: int, r3: int, r4: int, r5: int) -> Armv7m {
+        let sp_ = get_sp(cpu.sp, cpu.mode, cpu.control);
         set_spr(
             sp(),
             set_spr(
@@ -941,7 +951,7 @@ flux_rs::defs! {
                 Armv7m {
                     general_regs: gprs_post_pop(
                         cpu,
-                        get_sp(cpu.sp, cpu.mode, cpu.control),
+                        sp_,
                         r1,
                         r2,
                         r3,
@@ -951,13 +961,12 @@ flux_rs::defs! {
                 },
                 get_mem_addr(
                     bv_add(
-                        get_sp(cpu.sp, cpu.mode, cpu.control),
+                        sp_,
                         bv32(0x10)
                     ),
-                    cpu.mem
-                )
+                    cpu.mem)
             ),
-            bv_add(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x14))
+            bv_add(sp_, bv32(0x14))
         )
     }
 
@@ -988,29 +997,32 @@ flux_rs::defs! {
     }
 
     fn generic_isr_offset(old_cpu: Armv7m) -> BV32 {
-        left_shift(generic_isr_r2(old_cpu), bv32(2))
+       left_shift(generic_isr_r2(old_cpu), bv32(2))
     }
 
     fn cpu_post_generic_isr(old_cpu: Armv7m) -> Armv7m {
+        let generic_isr_r0 = left_shift(bv32(1), generic_isr_bit_loc(old_cpu));
+        let generic_isr_r2 = right_shift(bv_sub(get_special_reg(ipsr(), old_cpu), bv32(16)), bv32(5));
+        let generic_isr_offset = left_shift(generic_isr_r2, bv32(2));
         Armv7m {
             mem: update_mem(
-                 bv_add(bv32(0xe000_e200), generic_isr_offset(old_cpu)),
+                 bv_add(bv32(0xe000_e200), generic_isr_offset),
                  update_mem(
-                     bv_add(bv32(0xe000_e180), generic_isr_offset(old_cpu)),
+                     bv_add(bv32(0xe000_e180), generic_isr_offset),
                      old_cpu.mem,
-                     generic_isr_r0(old_cpu)
+                     generic_isr_r0
                 ),
-                generic_isr_r0(old_cpu)
+                generic_isr_r0
             ),
             general_regs: map_set(
                 map_set(
                     map_set(
                         old_cpu.general_regs,
                         r0(),
-                        generic_isr_r0(old_cpu)
+                        generic_isr_r0
                     ),
                     r2(),
-                    generic_isr_r2(old_cpu)
+                    generic_isr_r2
                 ),
                 r3(),
                 bv32(0xe000_e200)
