@@ -1208,16 +1208,6 @@ flux_rs::defs! {
         val & (1 << n) != 0
     }
 
-    fn right_shift(val: BV32, n: BV32) -> BV32 {
-        // right shift
-        bv_lshr(val, n)
-    }
-
-    fn left_shift(val: BV32, n: BV32) -> BV32 {
-        // shift left
-        bv_shl(val, n)
-    }
-
     fn wrapping_add_u32(val1: int, val2: int) -> int {
         if val1 + val2 > U32_MAX {
             val1 + val2 % U32_MAX
