@@ -190,17 +190,17 @@ pub mod nvic_defs {
     flux_rs::defs! {
             // all addresses are read / write as long as they are 4 byte aligned
             fn is_valid_nvic_addr(address: BV32) -> bool {
-                if (address >= ISER_START && bv_ule(address, ISER_END)) {
+                if (address >= ISER_START && address <= ISER_END) {
                     bv_urem(address - ISER_START, 4) == 0
-                } else if (address >= ICER_START && bv_ule(address, ICER_END)) {
+                } else if (address >= ICER_START && address <= ICER_END) {
                     bv_urem(address - ICER_START, 4) == 0
-                } else if (address >= ISPR_START && bv_ule(address, ISPR_END)) {
+                } else if (address >= ISPR_START && address <= ISPR_END) {
                     bv_urem(address - ISPR_START, 4) == 0
-                } else if (address >= ICPR_START && bv_ule(address, ICPR_END)) {
+                } else if (address >= ICPR_START && address <= ICPR_END) {
                     bv_urem(address - ICPR_START, 4) == 0
-                } else if (address >= IABR_START && bv_ule(address, IABR_END)) {
+                } else if (address >= IABR_START && address <= IABR_END) {
                     bv_urem(address - IABR_START, 4) == 0
-                } else if (address >= IPR_START && bv_ule(address, IPR_END)) {
+                } else if (address >= IPR_START && address <= IPR_END) {
                     bv_urem(address - IPR_START, 4) == 0
                 } else {
                     false
@@ -229,7 +229,7 @@ flux_rs::defs! {
 
     fn is_valid_ram_addr(address: BV32) -> bool {
         // TODO(VR): alignment?
-        address >= RAM_START && bv_ule(address, RAM_END)
+        address >= RAM_START && address <= RAM_END
     }
 
     fn is_valid_read_addr(address: BV32) -> bool {
