@@ -49,10 +49,7 @@ flux_rs::defs! {
     fn cpu_post_preempt(cpu: Armv7m, exception_num: int) -> Armv7m {
         let cpu_post_exc_entry = cpu_post_exception_entry(cpu, exception_num);
         cpu_post_exception_exit(
-            cpu_post_run_isr(
-                cpu_post_exc_entry,
-                exception_num
-            ),
+            cpu_post_run_isr(cpu_post_exc_entry, exception_num),
             get_bx_from_exception_num(exception_num, get_lr_direct(cpu_post_exc_entry))
         )
     }
@@ -151,133 +148,37 @@ flux_rs::defs! {
     }
 
     fn register_frame_preserved(addr: BV32, old_cpu: Armv7m, new_cpu: Armv7m) -> bool {
-        map_get(
-            old_cpu.mem,
-            addr
-        ) == map_get(
-            new_cpu.mem,
-            addr
-        )
+        map_get(old_cpu.mem, addr) == map_get(new_cpu.mem, addr)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x4
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x4
-        )
+        map_get(old_cpu.mem, addr + 0x4) == map_get(new_cpu.mem, addr + 0x4)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x8
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x8
-        )
+        map_get(old_cpu.mem, addr + 0x8) == map_get(new_cpu.mem, addr + 0x8)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0xc
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0xc
-        )
+        map_get(old_cpu.mem, addr + 0xc) == map_get(new_cpu.mem, addr + 0xc)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x10
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x10
-        )
+        map_get(old_cpu.mem, addr + 0x10) == map_get(new_cpu.mem, addr + 0x10)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x14
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x14
-        )
+        map_get(old_cpu.mem, addr + 0x14) == map_get(new_cpu.mem, addr + 0x14)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x18
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x18
-        )
+        map_get(old_cpu.mem, addr + 0x18) == map_get(new_cpu.mem, addr + 0x18)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x1c
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x1c
-        )
+        map_get(old_cpu.mem, addr + 0x1c) == map_get(new_cpu.mem, addr + 0x1c)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x20
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x20
-        )
+        map_get(old_cpu.mem, addr + 0x20) == map_get(new_cpu.mem, addr + 0x20)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x24
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x24
-        )
+        map_get(old_cpu.mem, addr + 0x24) == map_get(new_cpu.mem, addr + 0x24)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x28
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x28
-        )
+        map_get(old_cpu.mem, addr + 0x28) == map_get(new_cpu.mem, addr + 0x28)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x2c
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x2c
-        )
+        map_get(old_cpu.mem, addr + 0x2c) == map_get(new_cpu.mem, addr + 0x2c)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x30
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x30
-        )
+        map_get(old_cpu.mem, addr + 0x30) == map_get(new_cpu.mem, addr + 0x30)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x34
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x34
-        )
+        map_get(old_cpu.mem, addr + 0x34) == map_get(new_cpu.mem, addr + 0x34)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x38
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x38
-        )
+        map_get(old_cpu.mem, addr + 0x38) == map_get(new_cpu.mem, addr + 0x38)
         &&
-        map_get(
-            old_cpu.mem,
-            addr + 0x3c
-        ) == map_get(
-            new_cpu.mem,
-            addr + 0x3c
-        )
+        map_get(old_cpu.mem, addr + 0x3c) == map_get(new_cpu.mem, addr + 0x3c)
     }
 
     fn mem_post_exception_entry(sp: BV32, cpu: Armv7m) -> Map<BV32, BV32> {
@@ -507,23 +408,15 @@ flux_rs::defs! {
         &&
         switch_to_user_pt1_reg_restores_precondition(cpu)
         &&
-        sp_can_handle_exception_entry(
-            restores
-        )
+        sp_can_handle_exception_entry(restores)
         &&
-        sp_can_handle_preempt_exception_exit(
-            restores,
-            11
-        )
+        sp_can_handle_preempt_exception_exit(restores, 11)
     }
 
     fn cpu_post_switch_to_user_pt1_reg_restores(cpu: Armv7m) -> Armv7m {
         Armv7m {
             general_regs: gprs_post_switch_to_user_pt1_reg_restores(cpu),
-            sp: SP {
-                sp_process: get_gpr(r0(), cpu),
-                ..cpu.sp
-            },
+            sp: SP { sp_process: get_gpr(r0(), cpu), ..cpu.sp },
             ..cpu
         }
     }
@@ -531,10 +424,7 @@ flux_rs::defs! {
     fn cpu_post_switch_to_user_pt1_save_clobbers(cpu: Armv7m) -> Armv7m {
         Armv7m {
             mem: mem_post_switch_to_user_pt1_save_clobbers(cpu),
-            sp: SP {
-                sp_main: sp_main(cpu.sp) - 0x20,
-                ..cpu.sp
-            },
+            sp: SP { sp_main: sp_main(cpu.sp) - 0x20, ..cpu.sp },
             ..cpu
         }
     }
@@ -609,9 +499,7 @@ flux_rs::defs! {
     fn switch_to_user_pt2_save_registers_precondition(cpu: Armv7m) -> bool {
         // need r1 to be valid store
         let gpr = get_gpr(r1(), cpu);
-        is_valid_ram_addr(gpr)
-        &&
-        is_valid_ram_addr(gpr + 0x1c)
+        is_valid_ram_addr(gpr) && is_valid_ram_addr(gpr + 0x1c)
     }
 
     fn switch_to_user_pt2_restore_clobbers_precondition(cpu: Armv7m) -> bool {
@@ -644,10 +532,7 @@ flux_rs::defs! {
     fn cpu_post_switch_to_user_pt2_restore_clobbers(cpu: Armv7m) -> Armv7m {
         Armv7m {
             general_regs: gprs_post_switch_to_user_pt2_restore_clobbers(cpu),
-            sp: SP {
-                sp_main: sp_main(cpu.sp) + 0x20,
-                ..cpu.sp
-            },
+            sp: SP { sp_main: sp_main(cpu.sp) + 0x20, ..cpu.sp },
             pc: get_mem_addr(sp_main(cpu.sp) + 0x1c, cpu.mem),
             ..cpu
         }
@@ -722,29 +607,17 @@ flux_rs::defs! {
     }
 
     fn push_stack_sp_precondition(sp: BV32) -> bool {
-        is_valid_ram_addr(sp)
-        &&
-        is_valid_ram_addr(sp + 0x1C)
+        is_valid_ram_addr(sp) && is_valid_ram_addr(sp + 0x1C)
     }
 
     fn sp_can_handle_exception_entry(cpu: Armv7m) -> bool {
         // requires we have enough space to push 8 x 4 byte values into mem
         let sp = get_sp(cpu.sp, cpu.mode, cpu.control);
-        is_valid_ram_addr(
-            sp
-        )
-        &&
-        is_valid_ram_addr(
-            sp - 0x20
-        )
+        is_valid_ram_addr(sp) && is_valid_ram_addr(sp - 0x20)
     }
 
     fn sp_can_handle_exception_exit(sp: BV32) -> bool {
-        is_valid_ram_addr(sp)
-        &&
-        is_valid_ram_addr(
-            sp + 0x1c
-        )
+        is_valid_ram_addr(sp) && is_valid_ram_addr(sp + 0x1c)
     }
 
     fn sp_can_handle_preempt_exception_exit(cpu: Armv7m, exception_num: int) -> bool {
@@ -881,9 +754,7 @@ flux_rs::defs! {
 
     fn pop_spr_get_mem_addr_and_incr_precondition(cpu: Armv7m) -> bool {
         let sp = get_sp(cpu.sp, cpu.mode, cpu.control);
-        is_valid_ram_addr(sp)
-        &&
-        is_valid_ram_addr(sp + 0x4)
+        is_valid_ram_addr(sp) && is_valid_ram_addr(sp + 0x4)
     }
 
     fn pop_spr_update_reg_precondition(cpu: Armv7m, reg: int, val: BV32) -> bool {
@@ -946,14 +817,7 @@ flux_rs::defs! {
             set_spr(
                 r5,
                 Armv7m {
-                    general_regs: gprs_post_pop(
-                        cpu,
-                        sp_,
-                        r1,
-                        r2,
-                        r3,
-                        r4
-                    ),
+                    general_regs: gprs_post_pop(cpu, sp_, r1, r2, r3, r4),
                     ..cpu
                 },
                 get_mem_addr(
@@ -967,11 +831,7 @@ flux_rs::defs! {
     fn cpu_post_stmdb_wback(cpu: Armv7m, rd: int, r1: int, r2: int, r3: int) -> Armv7m {
             Armv7m {
                 mem: mem_post_stmdb_wback(cpu, rd, r1, r2, r3),
-                ..set_spr(
-                    rd,
-                    cpu,
-                    get_special_reg(rd, cpu) - 0xc
-                )
+                ..set_spr(rd, cpu, get_special_reg(rd, cpu) - 0xc)
             }
     }
 
@@ -1047,7 +907,7 @@ flux_rs::defs! {
         if get_special_reg(lr(), old_cpu) == 0xFFFF_FFF9 {
             0xFFFF_FFFD
         } else {
-           0xFFFF_FFF9
+            0xFFFF_FFF9
         }
     }
 
