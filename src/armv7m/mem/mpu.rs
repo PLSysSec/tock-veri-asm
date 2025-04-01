@@ -7,27 +7,27 @@
 use super::flux_defs::mpu_defs::*;
 use flux_rs::bitvec::BV32;
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000ED90))]
+#[flux_rs::constant(0xE000ED90)]
 pub const MPU_TYPE_ADDR: BV32 = BV32::new(0xE000ED90);
-#[flux_rs::constant(bv_int_to_bv32(0xE000ED94))]
+#[flux_rs::constant(0xE000ED94)]
 pub const MPU_CTRL_ADDR: BV32 = BV32::new(0xE000ED94);
-#[flux_rs::constant(bv_int_to_bv32(0xE000ED98))]
+#[flux_rs::constant(0xE000ED98)]
 pub const MPU_RNR_ADDR: BV32 = BV32::new(0xE000ED98);
-#[flux_rs::constant(bv_int_to_bv32(0xE000ED9C))]
+#[flux_rs::constant(0xE000ED9C)]
 pub const MPU_RBAR_ADDR: BV32 = BV32::new(0xE000ED9C);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDA0))]
+#[flux_rs::constant(0xE000EDA0)]
 pub const MPU_RASR_ADDR: BV32 = BV32::new(0xE000EDA0);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDA4))]
+#[flux_rs::constant(0xE000EDA4)]
 pub const MPU_RBAR_A1_ADDR: BV32 = BV32::new(0xE000EDA4);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDA8))]
+#[flux_rs::constant(0xE000EDA8)]
 pub const MPU_RASR_A1_ADDR: BV32 = BV32::new(0xE000EDA8);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDAC))]
+#[flux_rs::constant(0xE000EDAC)]
 pub const MPU_RBAR_A2_ADDR: BV32 = BV32::new(0xE000EDAC);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDB0))]
+#[flux_rs::constant(0xE000EDB0)]
 pub const MPU_RASR_A2_ADDR: BV32 = BV32::new(0xE000EDB0);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDB4))]
+#[flux_rs::constant(0xE000EDB4)]
 pub const MPU_RBAR_A3_ADDR: BV32 = BV32::new(0xE000EDB4);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDB8))]
+#[flux_rs::constant(0xE000EDB8)]
 pub const MPU_RASR_A3_ADDR: BV32 = BV32::new(0xE000EDB8);
 
 #[flux_rs::sig(fn (BV32[@addr]) -> bool[is_valid_mpu_read_addr(addr)])]
