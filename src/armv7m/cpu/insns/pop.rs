@@ -16,13 +16,13 @@ flux_rs::defs! {
                         get_mem_addr(sp, cpu.mem)
                     ),
                     r2,
-                    get_mem_addr(bv_add(sp, 0x4), cpu.mem)
+                    get_mem_addr(sp + 0x4, cpu.mem)
                 ),
                 r3,
-                get_mem_addr(bv_add(sp, 0x8), cpu.mem)
+                get_mem_addr(sp + 0x8, cpu.mem)
             ),
             r4,
-            get_mem_addr(bv_add(sp, 0xc), cpu.mem)
+            get_mem_addr(sp + 0xc, cpu.mem)
         )
     }
 }
@@ -40,7 +40,7 @@ impl Armv7m {
             requires
                 is_valid_ram_addr(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control))
                 &&
-                is_valid_ram_addr(bv_add(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control), 0x14))
+                is_valid_ram_addr(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control) + 0x14)
                 &&
                 !is_sp(r5)
                 &&

@@ -167,7 +167,7 @@ pub struct B32(u32);
 
 impl B32 {
     #[flux_rs::trusted]
-    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[bv_add(x, y)])]
+    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[x + y])]
     pub fn wrapping_add(self, other: B32) -> B32 {
         B32(self.0.wrapping_add(other.0))
     }

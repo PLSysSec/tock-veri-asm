@@ -275,7 +275,7 @@ fn kernel(armv7m: &mut Armv7m) {}
             &&
             // the hardware stacked r1 (which has the addr of our stored registers
             // field) is valid and is far enough away from sp_main
-            get_mem_addr(bv_add(sp_main(old_cpu.sp), 0x4), old_cpu.mem) == 0x7000_0020
+            get_mem_addr(sp_main(old_cpu.sp) + 0x4, old_cpu.mem) == 0x7000_0020
             &&
             // sp process and sp main are far apart
             sp_process(old_cpu.sp) == 0x8FFF_DDDD
@@ -379,7 +379,7 @@ mod arm_test {
                    sp_main(old_cpu.sp) == 0x6000_0020
                    &&
                    sp_process(old_cpu.sp) == 0x8FFF_FFFF
-                   // sp_main(old_cpu.sp) > bv_add(sp_process(old_cpu.sp), 0x20)
+                   // sp_main(old_cpu.sp) > sp_process(old_cpu.sp) + 0x20
                    // ||
                    // or sp process needs a buffer of 0x20 bytes on sp process to grow upwards
                    // sp_process(old_cpu.sp) < bv_sub(sp_main(old_cpu.sp), 0x20)

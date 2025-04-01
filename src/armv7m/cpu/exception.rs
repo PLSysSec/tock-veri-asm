@@ -144,7 +144,7 @@ impl Armv7m {
 
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@cpu], BV32[@return_exec]) -> BV32[get_sp_from_isr_ret(cpu.sp, return_exec)]
-            requires is_valid_ram_addr(bv_add(get_sp_from_isr_ret(cpu.sp, return_exec), 0x20))
+            requires is_valid_ram_addr(get_sp_from_isr_ret(cpu.sp, return_exec) + 0x20)
             ensures self: Armv7m { new_cpu: new_cpu == Armv7m {
                     mode: thread_mode(),
                     control: Control {
@@ -178,12 +178,12 @@ impl Armv7m {
             BV32[@fp]
         ) -> (
             BV32[get_mem_addr(fp, cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, 0x4), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, 0x8), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, 0xC), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, 0x10), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, 0x14), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, 0x1C), cpu.mem)],
+            BV32[get_mem_addr(fp + 0x4, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x8, cpu.mem)],
+            BV32[get_mem_addr(fp + 0xC, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x10, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x14, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x1C, cpu.mem)],
         )
         requires sp_can_handle_exception_exit(fp)
     )]
