@@ -382,7 +382,7 @@ mod arm_test {
                    // sp_main(old_cpu.sp) > sp_process(old_cpu.sp) + 0x20
                    // ||
                    // or sp process needs a buffer of 0x20 bytes on sp process to grow upwards
-                   // sp_process(old_cpu.sp) < bv_sub(sp_main(old_cpu.sp), 0x20)
+                   // sp_process(old_cpu.sp) < sp_main(old_cpu.sp) - 0x20
                )
                && sp_can_handle_preempt_exception_exit(old_cpu, exception_num)
            ensures self: Armv7m { new_cpu:

@@ -485,7 +485,7 @@ flux_rs::defs! {
         &&
         is_valid_ram_addr(sp_main(cpu.sp))
         &&
-        is_valid_ram_addr(bv_sub(sp_main(cpu.sp), 0x3c))
+        is_valid_ram_addr(sp_main(cpu.sp) - 0x3c)
     }
 
     fn switch_to_user_pt1_reg_restores_precondition(cpu: Armv7m) -> bool {
@@ -532,7 +532,7 @@ flux_rs::defs! {
         Armv7m {
             mem: mem_post_switch_to_user_pt1_save_clobbers(cpu),
             sp: SP {
-                sp_main: bv_sub(sp_main(cpu.sp), 0x20),
+                sp_main: sp_main(cpu.sp) - 0x20,
                 ..cpu.sp
             },
             ..cpu
@@ -580,28 +580,28 @@ flux_rs::defs! {
                                 map_set(
                                     map_set(
                                         cpu.mem,
-                                        bv_sub(sp_main(cpu.sp), 0x14),
+                                        sp_main(cpu.sp) - 0x14,
                                         get_gpr(r4(), cpu)
                                     ),
-                                    bv_sub(sp_main(cpu.sp), 0x10),
+                                    sp_main(cpu.sp) - 0x10,
                                     get_gpr(r5(), cpu)
                                 ),
-                                bv_sub(sp_main(cpu.sp), 0xc),
+                                sp_main(cpu.sp) - 0xc,
                                 get_gpr(r6(), cpu)
                             ),
-                            bv_sub(sp_main(cpu.sp), 0x8),
+                            sp_main(cpu.sp) - 0x8,
                             get_gpr(r7(), cpu)
                         ),
-                        bv_sub(sp_main(cpu.sp), 0x4),
+                        sp_main(cpu.sp) - 0x4,
                         cpu.lr
                     ),
-                    bv_sub(sp_main(cpu.sp), 0x20),
+                    sp_main(cpu.sp) - 0x20,
                     get_gpr(r8(), cpu),
                 ),
-                bv_sub(sp_main(cpu.sp), 0x1c),
+                sp_main(cpu.sp) - 0x1c,
                 get_gpr(r10(), cpu),
             ),
-            bv_sub(sp_main(cpu.sp), 0x18),
+            sp_main(cpu.sp) - 0x18,
             get_gpr(r11(), cpu),
         )
     }
@@ -716,8 +716,8 @@ flux_rs::defs! {
             cpu.sp,
             cpu.mode,
             cpu.control,
-            // bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), 0x20) & bv_not(3)
-            bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), 0x20)
+            // (get_sp(cpu.sp, cpu.mode, cpu.control) - 0x20) & bv_not(3)
+            get_sp(cpu.sp, cpu.mode, cpu.control) - 0x20
         )
     }
 
@@ -735,7 +735,7 @@ flux_rs::defs! {
         )
         &&
         is_valid_ram_addr(
-            bv_sub(sp, 0x20)
+            sp - 0x20
         )
     }
 
@@ -928,13 +928,13 @@ flux_rs::defs! {
             map_set(
                 map_set(
                     cpu.mem,
-                    bv_sub(special_reg, 0xc),
+                    special_reg - 0xc,
                     get_gpr(r1, cpu)
                 ),
-                bv_sub(special_reg, 0x8),
+                special_reg - 0x8,
                 get_gpr(r2, cpu)
             ),
-            bv_sub(special_reg, 0x4),
+            special_reg - 0x4,
             get_gpr(r3, cpu)
         )
     }
@@ -970,13 +970,13 @@ flux_rs::defs! {
                 ..set_spr(
                     rd,
                     cpu,
-                    bv_sub(get_special_reg(rd, cpu), 0xc)
+                    get_special_reg(rd, cpu) - 0xc
                 )
             }
     }
 
     fn generic_isr_bit_loc(old_cpu: Armv7m) -> BV32 {
-        bv_sub(get_special_reg(ipsr(), old_cpu), 16) & 31
+        (get_special_reg(ipsr(), old_cpu) - 16) & 31
     }
 
     fn generic_isr_r0(old_cpu: Armv7m) -> BV32 {
@@ -987,7 +987,7 @@ flux_rs::defs! {
     }
 
     fn generic_isr_r2(old_cpu: Armv7m) -> BV32 {
-        right_shift(bv_sub(get_special_reg(ipsr(), old_cpu), 16), 5)
+        right_shift(get_special_reg(ipsr(), old_cpu) - 16, 5)
     }
 
     fn generic_isr_offset(old_cpu: Armv7m) -> BV32 {
@@ -996,7 +996,7 @@ flux_rs::defs! {
 
     fn cpu_post_generic_isr(old_cpu: Armv7m) -> Armv7m {
         let generic_isr_r0 = left_shift(1, generic_isr_bit_loc(old_cpu));
-        let generic_isr_r2 = right_shift(bv_sub(get_special_reg(ipsr(), old_cpu), 16), 5);
+        let generic_isr_r2 = right_shift(get_special_reg(ipsr(), old_cpu) - 16, 5);
         let generic_isr_offset = left_shift(generic_isr_r2, 2);
         Armv7m {
             mem: update_mem(

@@ -28,7 +28,7 @@ impl Armv7m {
 
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@cpu])
-            requires is_valid_ram_addr(bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), 0x20))
+            requires is_valid_ram_addr(get_sp(cpu.sp, cpu.mode, cpu.control) - 0x20)
             ensures self: Armv7m { new_cpu: new_cpu == Armv7m { sp: sp_post_exception_entry(cpu), ..cpu } }
     )]
     fn push_stack_update_sp(&mut self) {
