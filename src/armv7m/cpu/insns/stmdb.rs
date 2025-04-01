@@ -12,7 +12,7 @@ impl Armv7m {
             requires
                 is_valid_ram_addr(get_special_reg(rd, old_cpu))
                 &&
-                is_valid_ram_addr(bv_sub(get_special_reg(rd, old_cpu), bv32(0xc)))
+                is_valid_ram_addr(bv_sub(get_special_reg(rd, old_cpu), 0xc))
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_stmdb_wback(old_cpu, rd, r1, r2, r3) }
 
     )]

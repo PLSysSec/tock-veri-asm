@@ -21,7 +21,7 @@ flux_rs::defs! {
 
     fn isr_r0(old_cpu: Armv7m) -> B32 {
         left_shift(
-            bv32(1),
+            1,
             isr_bit_loc(old_cpu)
         )
     }
@@ -412,9 +412,9 @@ Now, using this instruction and it's corresponding annotation, we can reason abo
 
 ```rust
 #[flux_rs::sig(fn (self: &strg Armv7m[@old_cpu]) ensures self: Armv7m { new_cpu:
-    get_gpr(r0(), new_cpu) == bv32(0)
+    get_gpr(r0(), new_cpu) == 0
     &&
-    get_gpr(r1(), new_cpu) == bv32(1)
+    get_gpr(r1(), new_cpu) == 1
 })]
 fn two_movs(armv7m: &mut Armv7m) {
     armv7m.movw_imm(GPR::R0, B32::from(0));
