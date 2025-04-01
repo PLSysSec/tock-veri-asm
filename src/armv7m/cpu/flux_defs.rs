@@ -708,7 +708,7 @@ flux_rs::defs! {
     }
 
     fn psr_post_exception_entry(cpu: Armv7m, exception_num: int) -> BV32 {
-        bv_or(bv_and(cpu.psr, bv_not(0xff)), bv32(exception_num))
+        bv_or(cpu.psr & bv_not(0xff), bv32(exception_num))
     }
 
     fn sp_post_exception_entry(cpu: Armv7m) -> SP {
@@ -716,7 +716,7 @@ flux_rs::defs! {
             cpu.sp,
             cpu.mode,
             cpu.control,
-            // bv_and(bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), 0x20), bv_not(3))
+            // bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), 0x20) & bv_not(3)
             bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), 0x20)
         )
     }
@@ -841,7 +841,7 @@ flux_rs::defs! {
             cpu.psr
         } else {
             // ipsr
-            bv_and(cpu.psr, 0xff)
+            cpu.psr & 0xff
         }
     }
 
@@ -982,7 +982,7 @@ flux_rs::defs! {
     }
 
     fn generic_isr_bit_loc(old_cpu: Armv7m) -> BV32 {
-        bv_and(bv_sub(get_special_reg(ipsr(), old_cpu), 16), 31)
+        bv_sub(get_special_reg(ipsr(), old_cpu), 16) & 31
     }
 
     fn generic_isr_r0(old_cpu: Armv7m) -> BV32 {
@@ -1214,7 +1214,7 @@ flux_rs::defs! {
 
     fn nth_bit_is_set(val: BV32, n: BV32) -> bool {
         // val & (1 << n)
-        bv_and(val, left_shift(1, n)) != 0
+        val & left_shift(1, n) != 0
     }
 
     fn right_shift(val: BV32, n: BV32) -> BV32 {

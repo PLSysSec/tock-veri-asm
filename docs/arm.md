@@ -177,7 +177,7 @@ impl BitAnd for B32 {
     type Output = B32;
 
     #[flux_rs::trusted]
-    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[bv_and(x, y)])]
+    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[x & y])]
     fn bitand(self, rhs: Self) -> B32 {
         B32(self.0 & rhs.0)
     }

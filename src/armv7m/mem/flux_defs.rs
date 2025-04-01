@@ -279,6 +279,6 @@ flux_rs::defs! {
     }
 
     fn and(val1: bitvec<32>, val2: bitvec<32>) -> bitvec<32> {
-        bv_and(val1, val2)
+        val1 & val2
     }
 }
