@@ -20,10 +20,7 @@ flux_rs::defs! {
     }
 
     fn isr_r0(old_cpu: Armv7m) -> B32 {
-        left_shift(
-            1,
-            isr_bit_loc(old_cpu)
-        )
+        1 << isr_bit_loc(old_cpu)
     }
 
     fn isr_r2(old_cpu: Armv7m) -> B32 {

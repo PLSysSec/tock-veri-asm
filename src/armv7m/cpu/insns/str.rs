@@ -26,12 +26,12 @@ impl Armv7m {
         requires
             is_valid_write_addr(
                     get_gpr(reg_base, old_cpu) +
-                    left_shift(get_gpr(reg_offset, old_cpu), shift)
+                    (get_gpr(reg_offset, old_cpu) << shift)
             )
         ensures self: Armv7m { new_cpu: new_cpu == Armv7m {
                 mem: update_mem(
                             get_gpr(reg_base, old_cpu) +
-                            left_shift(get_gpr(reg_offset, old_cpu), shift)
+                            (get_gpr(reg_offset, old_cpu) << shift)
                         ,
                         old_cpu.mem,
                         get_gpr(reg_to_store, old_cpu)
