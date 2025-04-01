@@ -984,7 +984,7 @@ flux_rs::defs! {
     }
 
     fn generic_isr_r2(old_cpu: Armv7m) -> BV32 {
-        right_shift(get_special_reg(ipsr(), old_cpu) - 16, 5)
+        (get_special_reg(ipsr(), old_cpu) - 16) >> 5
     }
 
     fn generic_isr_offset(old_cpu: Armv7m) -> BV32 {
@@ -993,7 +993,7 @@ flux_rs::defs! {
 
     fn cpu_post_generic_isr(old_cpu: Armv7m) -> Armv7m {
         let generic_isr_r0 = 1 << generic_isr_bit_loc(old_cpu);
-        let generic_isr_r2 = right_shift(get_special_reg(ipsr(), old_cpu) - 16, 5);
+        let generic_isr_r2 = (get_special_reg(ipsr(), old_cpu) - 16) >> 5;
         let generic_isr_offset = generic_isr_r2 << 2;
         Armv7m {
             mem: update_mem(
