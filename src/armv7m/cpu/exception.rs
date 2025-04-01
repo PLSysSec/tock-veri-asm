@@ -253,7 +253,7 @@ impl Armv7m {
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@cpu], u8[@exception_num]) -> BV32[get_bx_from_exception_num(exception_num, cpu.lr)]
             requires mode_is_handler(cpu.mode) && get_special_reg(ipsr(), cpu) == bv32(exception_num)
-            // (exception_num == 11 || exception_num == 15 || (exception_num >= 16 => bv_uge(get_special_reg(ipsr(), cpu), 16)))
+            // (exception_num == 11 || exception_num == 15 || (exception_num >= 16 => get_special_reg(ipsr(), cpu) >= 16))
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_run_isr(cpu, exception_num)  }
     )]
     fn run_isr(&mut self, exception_number: u8) -> BV32 {
