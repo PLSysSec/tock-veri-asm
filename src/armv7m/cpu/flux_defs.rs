@@ -708,7 +708,7 @@ flux_rs::defs! {
     }
 
     fn psr_post_exception_entry(cpu: Armv7m, exception_num: int) -> BV32 {
-        bv_or(cpu.psr & bv_not(0xff), bv32(exception_num))
+        (cpu.psr & bv_not(0xff)) | bv32(exception_num)
     }
 
     fn sp_post_exception_entry(cpu: Armv7m) -> SP {
