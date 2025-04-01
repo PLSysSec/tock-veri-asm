@@ -79,7 +79,7 @@ flux_rs::defs! {
     }
 
     fn get_sp_from_isr_ret(sp: SP, return_exec: BV32) -> BV32 {
-        if return_exec == 0xFFFF_FFFF9 {
+        if return_exec == 0xFFFF_FFF9 {
             sp.sp_main
         } else {
             sp.sp_process
@@ -87,7 +87,7 @@ flux_rs::defs! {
     }
 
     fn sp_post_exception_exit(sp: SP, return_exec: BV32) -> SP {
-        if return_exec == 0xFFFF_FFFF9 {
+        if return_exec == 0xFFFF_FFF9 {
             SP { sp_main: bv_add(sp.sp_main, 0x20), ..sp }
         } else {
             SP { sp_process: bv_add(sp.sp_process, 0x20), ..sp }
