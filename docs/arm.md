@@ -7,7 +7,7 @@ At a high level, we are currently able to...
 1. Prove an assembly program using flux annotations (on a subset of Thumb instructions)
 2. Prove that flux annotations for these programs are correct given our emulation
 
-Importantly, our emulation has semantics which are taken from the ARM hardware spec. 
+Importantly, our emulation has semantics which are taken from the ARM hardware spec.
 
 ## Verified Armv7m ISR
 
@@ -18,12 +18,9 @@ flux_rs::defs! {
     fn isr_bit_loc(old_cpu: Armv7m) -> B32 {
         bv32((to_int(get_special_reg(ipsr(), old_cpu)) - 16) % 32)
     }
-    
+
     fn isr_r0(old_cpu: Armv7m) -> B32 {
-        left_shift(
-            bv32(1), 
-            isr_bit_loc(old_cpu)
-        )
+        1 << isr_bit_loc(old_cpu)
     }
 
     fn isr_r2(old_cpu: Armv7m) -> B32 {
@@ -58,18 +55,18 @@ flux_rs::defs! {
 //   38:   e000e180        .word   0xe000e180
 //   3c:   e000e200        .word   0xe000e200
 #[flux_rs::sig(
-    fn (self: &strg Armv7m[@old_cpu]) 
+    fn (self: &strg Armv7m[@old_cpu])
     // VTOCK TODO:
     //
     // Note we need to say that the IPSR is more than 16
     // This is guaranteed by exception entry but we should
     // probably formalize that somehow
-    requires to_int(get_special_reg(ipsr(), old_cpu)) >= 16 
+    requires to_int(get_special_reg(ipsr(), old_cpu)) >= 16
     ensures self: Armv7m { new_cpu:
         get_gpr(r0(), new_cpu) == isr_r0(old_cpu)
         &&
         get_gpr(r2(), new_cpu) == isr_r2(old_cpu)
-        && 
+        &&
         nth_bit_is_set(
             get_mem_addr(
                 0xe000_e180 + isr_offset(old_cpu),
@@ -124,7 +121,7 @@ pub fn generic_isr_armv7m(armv7m: &mut Armv7m) {
     armv7m.pseudo_ldr(GPR::R3, B32::from(0xe000_e180));
     // r0 = 1 << (ipsr - 16 & 31)
     // r3 = 0xe000_e180
-    // r2 = (ipsr - 16 >> 5) 
+    // r2 = (ipsr - 16 >> 5)
     armv7m.strw_lsl_reg(
         GPR::R0,
         GPR::R3,
@@ -157,7 +154,7 @@ This spec effectively says, "The proper bit (meaning the bit specified by the ex
 
 ### The B32 Type
 
-In order to represent registers in a manner that allows for efficient verification, we use a special type `B32`. Internally, `B32` is a simple wrapper around `u32` refined (in Flux) by a bitvector. We then implement most bitwise operands and arithmetic operations for this type (see below for a small example). 
+In order to represent registers in a manner that allows for efficient verification, we use a special type `B32`. Internally, `B32` is a simple wrapper around `u32` refined (in Flux) by a bitvector. We then implement most bitwise operands and arithmetic operations for this type (see below for a small example).
 
 ```rust
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -167,7 +164,7 @@ pub struct B32(u32);
 
 impl B32 {
     #[flux_rs::trusted]
-    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[bv_add(x, y)])]
+    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[x + y])]
     pub fn wrapping_add(self, other: B32) -> B32 {
         B32(self.0.wrapping_add(other.0))
     }
@@ -177,15 +174,15 @@ impl BitAnd for B32 {
     type Output = B32;
 
     #[flux_rs::trusted]
-    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[bv_and(x, y)])]
+    #[flux_rs::sig(fn (B32[@x], B32[@y]) -> B32[x & y])]
     fn bitand(self, rhs: Self) -> B32 {
         B32(self.0 & rhs.0)
     }
 }
 ```
 
-We could simply represent registers as `u32`, but this would require us to traverse in and out of the theory of bitvectors in order to reason about bitwise operands. This is a major performance overhead. 
- 
+We could simply represent registers as `u32`, but this would require us to traverse in and out of the theory of bitvectors in order to reason about bitwise operands. This is a major performance overhead.
+
 __Note that using `B32` rather than `u32` resulted in Flux checking [our tests](https://github.com/vrindisbacher/tock-veri-asm-sb/blob/051efa260909288683e3cfb1524b8644e92ba84c/src/lib.rs#L115) in ~ 4 seconds rather than ~ 25 seconds.__
 
 ### Maps for 'Functional' Updates
@@ -312,7 +309,7 @@ pub struct Armv7m {
 }
 ```
 
-General and Special purpose registers are represented as a map from enums (that enumerate the possible registers) to a value of type `B32`. Finally, we have a notion of memory, used to reason about memory mapped registers like those for the NVIC (Nested Vector Interrupt Controller). This is implemented as a map from addresses to `B32`. 
+General and Special purpose registers are represented as a map from enums (that enumerate the possible registers) to a value of type `B32`. Finally, we have a notion of memory, used to reason about memory mapped registers like those for the NVIC (Nested Vector Interrupt Controller). This is implemented as a map from addresses to `B32`.
 
 ```rust
 pub type Mem = Regs<u32, B32>;
@@ -333,8 +330,8 @@ The memory that is read from / written to is enforced by a series of flux constr
 
 ```rust
 #[flux_rs::sig(
-    fn (&Memory[@mem], u32[@addr]) -> B32[get_mem_addr(addr, mem)] 
-        requires is_valid_read_addr(addr) 
+    fn (&Memory[@mem], u32[@addr]) -> B32[get_mem_addr(addr, mem)]
+        requires is_valid_read_addr(addr)
 )]
 ```
 
@@ -375,17 +372,17 @@ impl Armv7m {
     //       APSR.C = carry;
     //       // APSR.V unchanged
     #[flux_rs::sig(
-        fn (self: &strg Armv7m[@old_cpu], GPR[@reg], B32[@val]) 
+        fn (self: &strg Armv7m[@old_cpu], GPR[@reg], B32[@val])
             ensures self: Armv7m { new_cpu: grp_updated(reg, old_cpu, new_cpu, val) && new_cpu.special_regs == old_cpu.special_regs && new_cpu.mem == old_cpu.mem }
     )]
     fn update_general_reg_with_b32(&mut self, register: GPR, value: B32) {
         self.general_regs.set(register, value);
     }
 
-    #[flux_rs::sig(fn (self: &strg Armv7m[@old_cpu], GPR[@reg], B32[@val]) 
-        ensures self: Armv7m { 
-            new_cpu: 
-                grp_updated(reg, old_cpu, new_cpu, val) 
+    #[flux_rs::sig(fn (self: &strg Armv7m[@old_cpu], GPR[@reg], B32[@val])
+        ensures self: Armv7m {
+            new_cpu:
+                grp_updated(reg, old_cpu, new_cpu, val)
                 &&
                 old_cpu.special_regs == new_cpu.special_regs
                 &&
@@ -411,10 +408,10 @@ impl Armv7m {
 Now, using this instruction and it's corresponding annotation, we can reason about a program. For example...
 
 ```rust
-#[flux_rs::sig(fn (self: &strg Armv7m[@old_cpu]) ensures self: Armv7m { new_cpu: 
-    get_gpr(r0(), new_cpu) == bv32(0)
+#[flux_rs::sig(fn (self: &strg Armv7m[@old_cpu]) ensures self: Armv7m { new_cpu:
+    get_gpr(r0(), new_cpu) == 0
     &&
-    get_gpr(r1(), new_cpu) == bv32(1)
+    get_gpr(r1(), new_cpu) == 1
 })]
 fn two_movs(armv7m: &mut Armv7m) {
     armv7m.movw_imm(GPR::R0, B32::from(0));
@@ -430,5 +427,5 @@ Here we update register `r0` with immediate value `0`, and `r1` with immediate v
     - Certain ops need to be implemented fully (i.e. flag updates and other side effects)
 2. Encode register modes & exception handling for Arm.
     - This is important for our ISR reasoning as we need to reason about arbitrary processes being pre-empted by an interrupt
-3. Work on ARMv6m and Risc-V 
+3. Work on ARMv6m and Risc-V
     -

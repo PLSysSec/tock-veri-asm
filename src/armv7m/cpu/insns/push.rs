@@ -19,19 +19,19 @@ flux_rs::defs! {
                     map_set(
                         map_set(
                             cpu.mem,
-                            bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x14)),
+                            get_sp(cpu.sp, cpu.mode, cpu.control) - 0x14,
                             get_gpr(r1, cpu)
                         ),
-                        bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x10)),
+                        get_sp(cpu.sp, cpu.mode, cpu.control) - 0x10,
                         get_gpr(r2, cpu)
                     ),
-                    bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0xc)),
+                    get_sp(cpu.sp, cpu.mode, cpu.control) - 0xc,
                     get_gpr(r3, cpu)
                 ),
-                bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x8)),
+                get_sp(cpu.sp, cpu.mode, cpu.control) - 0x8,
                 get_gpr(r4, cpu)
             ),
-            bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x4)),
+            get_sp(cpu.sp, cpu.mode, cpu.control) - 0x4,
             get_special_reg(r5, cpu)
         )
     }
@@ -50,14 +50,14 @@ impl Armv7m {
             requires
                 is_valid_ram_addr(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control))
                 &&
-                is_valid_ram_addr(bv_sub(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control), bv32(0x14)))
+                is_valid_ram_addr(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control) - 0x14)
             ensures self: Armv7m { new_cpu: new_cpu == Armv7m {
                     mem: mem_post_push(old_cpu, r1, r2, r3, r4, r5),
                     sp: set_sp(
                         old_cpu.sp,
                         old_cpu.mode,
                         old_cpu.control,
-                        bv_sub(get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control), bv32(0x14))
+                        get_sp(old_cpu.sp, old_cpu.mode, old_cpu.control) - 0x14
                     ),
                     ..old_cpu
                 }

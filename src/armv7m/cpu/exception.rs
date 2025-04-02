@@ -28,7 +28,7 @@ impl Armv7m {
 
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@cpu])
-            requires is_valid_ram_addr(bv_sub(get_sp(cpu.sp, cpu.mode, cpu.control), bv32(0x20)))
+            requires is_valid_ram_addr(get_sp(cpu.sp, cpu.mode, cpu.control) - 0x20)
             ensures self: Armv7m { new_cpu: new_cpu == Armv7m { sp: sp_post_exception_entry(cpu), ..cpu } }
     )]
     fn push_stack_update_sp(&mut self) {
@@ -144,11 +144,11 @@ impl Armv7m {
 
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@cpu], BV32[@return_exec]) -> BV32[get_sp_from_isr_ret(cpu.sp, return_exec)]
-            requires is_valid_ram_addr(bv_add(get_sp_from_isr_ret(cpu.sp, return_exec), bv32(0x20)))
+            requires is_valid_ram_addr(get_sp_from_isr_ret(cpu.sp, return_exec) + 0x20)
             ensures self: Armv7m { new_cpu: new_cpu == Armv7m {
                     mode: thread_mode(),
                     control: Control {
-                        spsel: return_exec != bv32(0xFFFF_FFF9),
+                        spsel: return_exec != 0xFFFF_FFF9,
                         ..cpu.control
                     },
                     sp: sp_post_exception_exit(cpu.sp, return_exec),
@@ -178,12 +178,12 @@ impl Armv7m {
             BV32[@fp]
         ) -> (
             BV32[get_mem_addr(fp, cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, bv32(0x4)), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, bv32(0x8)), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, bv32(0xC)), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, bv32(0x10)), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, bv32(0x14)), cpu.mem)],
-            BV32[get_mem_addr(bv_add(fp, bv32(0x1C)), cpu.mem)],
+            BV32[get_mem_addr(fp + 0x4, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x8, cpu.mem)],
+            BV32[get_mem_addr(fp + 0xC, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x10, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x14, cpu.mem)],
+            BV32[get_mem_addr(fp + 0x1C, cpu.mem)],
         )
         requires sp_can_handle_exception_exit(fp)
     )]
@@ -253,7 +253,7 @@ impl Armv7m {
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@cpu], u8[@exception_num]) -> BV32[get_bx_from_exception_num(exception_num, cpu.lr)]
             requires mode_is_handler(cpu.mode) && get_special_reg(ipsr(), cpu) == bv32(exception_num)
-            // (exception_num == 11 || exception_num == 15 || (exception_num >= 16 => bv_uge(get_special_reg(ipsr(), cpu), bv32(16))))
+            // (exception_num == 11 || exception_num == 15 || (exception_num >= 16 => get_special_reg(ipsr(), cpu) >= 16))
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_run_isr(cpu, exception_num)  }
     )]
     fn run_isr(&mut self, exception_number: u8) -> BV32 {

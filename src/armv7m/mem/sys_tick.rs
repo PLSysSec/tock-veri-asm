@@ -9,13 +9,13 @@ use flux_rs::bitvec::BV32;
 
 use super::flux_defs::sys_tick_defs::*;
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000E010))]
+#[flux_rs::constant(0xE000E010)]
 pub const SYST_CSR_ADDR: BV32 = BV32::new(0xE000E010);
-#[flux_rs::constant(bv_int_to_bv32(0xE000E014))]
+#[flux_rs::constant(0xE000E014)]
 pub const SYST_RVR_ADDR: BV32 = BV32::new(0xE000E014);
-#[flux_rs::constant(bv_int_to_bv32(0xE000E018))]
+#[flux_rs::constant(0xE000E018)]
 pub const SYST_CVR_ADDR: BV32 = BV32::new(0xE000E018);
-#[flux_rs::constant(bv_int_to_bv32(0xE000E01C))]
+#[flux_rs::constant(0xE000E01C)]
 pub const SYST_CALIB_ADDR: BV32 = BV32::new(0xE000E01C);
 
 #[flux_rs::sig(fn (BV32[@addr]) -> bool[is_valid_sys_tick_read_addr(addr)])]

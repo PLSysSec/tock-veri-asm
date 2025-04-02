@@ -25,45 +25,45 @@
 
 pub type Mem = Regs<BV32, BV32>;
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000_0000))]
+#[flux_rs::constant(0xE000_0000)]
 const PPB_START: BV32 = BV32::new(0xE000_0000);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE00F_FFFF))]
+#[flux_rs::constant(0xE00F_FFFF)]
 const PPB_END: BV32 = BV32::new(0xE00F_FFFF);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000_E000))]
+#[flux_rs::constant(0xE000_E000)]
 const INTERRUPT_AUXILIARY_CONTROL_REGISTER_START: BV32 = BV32::new(0xE000_E000);
-#[flux_rs::constant(bv_int_to_bv32(0xE000_E00F))]
+#[flux_rs::constant(0xE000_E00F)]
 const INTERRUPT_AUXILIARY_CONTROL_REGISTER_END: BV32 = BV32::new(0xE000_E00F);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000_ED00))]
+#[flux_rs::constant(0xE000_ED00)]
 const SYSTEM_CONTROL_BLOCK_START: BV32 = BV32::new(0xE000_ED00);
-#[flux_rs::constant(bv_int_to_bv32(0xE000_ED8F))]
+#[flux_rs::constant(0xE000_ED8F)]
 const SYSTEM_CONTROL_BLOCK_END: BV32 = BV32::new(0xE000_ED8F);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000EF00))]
+#[flux_rs::constant(0xE000EF00)]
 const SW_TRIGGER_INTERRUPT_REG_START: BV32 = BV32::new(0xE000EF00);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EF8F))]
+#[flux_rs::constant(0xE000EF8F)]
 const SW_TRIGGER_INTERRUPT_REG_END: BV32 = BV32::new(0xE000EF8F);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000E010))]
+#[flux_rs::constant(0xE000E010)]
 const SYS_TICK_START: BV32 = BV32::new(0xE000E010);
-#[flux_rs::constant(bv_int_to_bv32(0xE000E0FF))]
+#[flux_rs::constant(0xE000E0FF)]
 const SYS_TICK_END: BV32 = BV32::new(0xE000E0FF);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000E100))]
+#[flux_rs::constant(0xE000E100)]
 const NVIC_START: BV32 = BV32::new(0xE000E100);
-#[flux_rs::constant(bv_int_to_bv32(0xE000ECFF))]
+#[flux_rs::constant(0xE000ECFF)]
 const NVIC_END: BV32 = BV32::new(0xE000ECFF);
 
-#[flux_rs::constant(bv_int_to_bv32(0xE000ED90))]
+#[flux_rs::constant(0xE000ED90)]
 const MPU_START: BV32 = BV32::new(0xE000ED90);
-#[flux_rs::constant(bv_int_to_bv32(0xE000EDEF))]
+#[flux_rs::constant(0xE000EDEF)]
 const MPU_END: BV32 = BV32::new(0xE000EDEF);
 
-#[flux_rs::constant(bv_int_to_bv32(0x6000_0000))]
+#[flux_rs::constant(0x6000_0000)]
 const RAM_START: BV32 = BV32::new(0x6000_0000);
-#[flux_rs::constant(bv_int_to_bv32(0x9FFF_FFFF))]
+#[flux_rs::constant(0x9FFF_FFFF)]
 const RAM_END: BV32 = BV32::new(0x9FFF_FFFF);
 
 pub mod flux_defs;

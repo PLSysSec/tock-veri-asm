@@ -161,7 +161,7 @@ pub fn switch_to_user_part2(armv7m: &mut Armv7m) {
         &&
         mode_is_thread_unprivileged(new_cpu.mode, new_cpu.control)
         &&
-        sp_process(new_cpu.sp) == bv32(0x8FFF_FFDD)
+        sp_process(new_cpu.sp) == 0x8FFF_FFDD
         &&
         register_frame_preserved(sp_main(new_cpu.sp), old_cpu, new_cpu)
         &&
@@ -182,11 +182,11 @@ fn get_r1(armv7m: &Armv7m) -> BV32 {
             &&
             mode_is_thread_privileged(old_cpu.mode, old_cpu.control)
             &&
-            get_gpr(r0(), old_cpu) == bv32(0x8FFF_FFFF)
+            get_gpr(r0(), old_cpu) == 0x8FFF_FFFF
             &&
-            get_gpr(r1(), old_cpu) == bv32(0x7000_0020)
+            get_gpr(r1(), old_cpu) == 0x7000_0020
             &&
-            sp_main(old_cpu.sp) == bv32(0x6050_0000)
+            sp_main(old_cpu.sp) == 0x6050_0000
        ensures self: Armv7m { new_cpu:
            // r0, r2, r3, and r12 are clobbered but are caller saved
            get_gpr(r1(), new_cpu) == get_gpr(r1(), old_cpu)
@@ -252,7 +252,7 @@ pub fn tock_control_flow_kernel_to_kernel(armv7m: &mut Armv7m, exception_num: u8
             mode_is_thread_privileged(new_cpu.mode, new_cpu.control)
             &&
             // fake the resulting sp - so we know there is no overlap
-            sp_main(new_cpu.sp) == bv32(0x6040_0000)
+            sp_main(new_cpu.sp) == 0x6040_0000
             &&
             // sp process is preserved
             sp_process(old_cpu.sp) == sp_process(new_cpu.sp)
@@ -275,12 +275,12 @@ fn kernel(armv7m: &mut Armv7m) {}
             &&
             // the hardware stacked r1 (which has the addr of our stored registers
             // field) is valid and is far enough away from sp_main
-            get_mem_addr(bv_add(sp_main(old_cpu.sp), bv32(0x4)), old_cpu.mem) == bv32(0x7000_0020)
+            get_mem_addr(sp_main(old_cpu.sp) + 0x4, old_cpu.mem) == 0x7000_0020
             &&
             // sp process and sp main are far apart
-            sp_process(old_cpu.sp) == bv32(0x8FFF_DDDD)
+            sp_process(old_cpu.sp) == 0x8FFF_DDDD
             &&
-            sp_main(old_cpu.sp) == bv32(0x6050_0000)
+            sp_main(old_cpu.sp) == 0x6050_0000
         ensures self: Armv7m { new_cpu:
             sp_process(old_cpu.sp) == sp_process(new_cpu.sp)
             &&
@@ -350,7 +350,7 @@ mod arm_test {
             &&
             mode_is_thread_unprivileged(new_cpu.mode, new_cpu.control)
             &&
-            sp_process(new_cpu.sp) == bv32(0x8FFF_FFDD)
+            sp_process(new_cpu.sp) == 0x8FFF_FFDD
             &&
             register_frame_preserved(sp_main(new_cpu.sp), old_cpu, new_cpu)
             &&
@@ -376,17 +376,17 @@ mod arm_test {
                //
                (
                    // sp main needs a buffer of 0x20 bytes on sp_process to grow downwards
-                   sp_main(old_cpu.sp) == bv32(0x6000_0020)
+                   sp_main(old_cpu.sp) == 0x6000_0020
                    &&
-                   sp_process(old_cpu.sp) == bv32(0x8FFF_FFFF)
-                   // sp_main(old_cpu.sp) > bv_add(sp_process(old_cpu.sp), bv32(0x20))
+                   sp_process(old_cpu.sp) == 0x8FFF_FFFF
+                   // sp_main(old_cpu.sp) > sp_process(old_cpu.sp) + 0x20
                    // ||
                    // or sp process needs a buffer of 0x20 bytes on sp process to grow upwards
-                   // sp_process(old_cpu.sp) < bv_sub(sp_main(old_cpu.sp), bv32(0x20))
+                   // sp_process(old_cpu.sp) < sp_main(old_cpu.sp) - 0x20
                )
                && sp_can_handle_preempt_exception_exit(old_cpu, exception_num)
            ensures self: Armv7m { new_cpu:
-               sp_main(new_cpu.sp) == sp_main(old_cpu.sp) && get_gpr(r0(), new_cpu) == bv32(10)
+               sp_main(new_cpu.sp) == sp_main(old_cpu.sp) && get_gpr(r0(), new_cpu) == 10
             }
     )]
     fn full_circle(armv7m: &mut Armv7m, exception_number: u8) {

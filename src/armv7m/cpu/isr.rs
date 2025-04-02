@@ -7,9 +7,9 @@ flux_rs::defs! {}
 
 impl Armv7m {
     #[flux_rs::sig(
-        fn (self: &strg Armv7m[@old_cpu]) -> BV32[bv32(0xFFFF_FFF9)]
+        fn (self: &strg Armv7m[@old_cpu]) -> BV32[0xFFFF_FFF9]
         requires
-            bv_uge(get_special_reg(ipsr(), old_cpu), bv32(16))
+            get_special_reg(ipsr(), old_cpu) >= 16
             &&
             mode_is_handler(old_cpu.mode)
         ensures self: Armv7m { new_cpu: new_cpu == cpu_post_generic_isr(old_cpu) }
@@ -65,7 +65,7 @@ impl Armv7m {
     }
 
     #[flux_rs::sig(
-        fn (self: &strg Armv7m[@old_cpu]) -> BV32[bv32(0xFFFF_FFF9)]
+        fn (self: &strg Armv7m[@old_cpu]) -> BV32[0xFFFF_FFF9]
             requires mode_is_handler(old_cpu.mode)
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_svc_to_kernel_isr(old_cpu) }
     )]
@@ -87,7 +87,7 @@ impl Armv7m {
     }
 
     #[flux_rs::sig(
-        fn (self: &strg Armv7m[@old_cpu]) -> BV32[bv32(0xFFFF_FFFD)]
+        fn (self: &strg Armv7m[@old_cpu]) -> BV32[0xFFFF_FFFD]
             requires mode_is_handler(old_cpu.mode)
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_svc_to_app_isr(old_cpu) }
     )]
@@ -114,7 +114,7 @@ impl Armv7m {
     }
 
     #[flux_rs::sig(
-        fn (self: &strg Armv7m[@old_cpu]) -> BV32[bv32(0xFFFF_FFF9)]
+        fn (self: &strg Armv7m[@old_cpu]) -> BV32[0xFFFF_FFF9]
             requires mode_is_handler(old_cpu.mode)
             ensures self: Armv7m { new_cpu: new_cpu ==  cpu_post_sys_tick_isr(old_cpu) }
     )]
