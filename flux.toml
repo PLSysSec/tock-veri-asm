@@ -1,2 +1,3 @@
 cache = true
 solver = "cvc5"
+flux_smt_define_fun = true

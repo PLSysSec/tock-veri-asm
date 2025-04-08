@@ -617,7 +617,7 @@ flux_rs::defs! {
     }
 
     fn sp_can_handle_exception_exit(sp: BV32) -> bool {
-        is_valid_ram_addr(sp) && is_valid_ram_addr(sp + 0x1c)
+        is_valid_ram_addr(sp) && is_valid_ram_addr(sp + 0x20)
     }
 
     fn sp_can_handle_preempt_exception_exit(cpu: Armv7m, exception_num: int) -> bool {
