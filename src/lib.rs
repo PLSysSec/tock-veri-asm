@@ -212,6 +212,8 @@ fn get_r1(armv7m: &Armv7m) -> BV32 {
            get_special_reg(psr(), new_cpu) == get_special_reg(psr(), old_cpu)
            &&
            new_cpu.pc == old_cpu.lr
+           &&
+           mode_is_thread_privileged(new_cpu.mode, new_cpu.control)
        }
 )]
 pub fn tock_control_flow_kernel_to_kernel(armv7m: &mut Armv7m, exception_num: u8) {
@@ -313,6 +315,8 @@ fn kernel(armv7m: &mut Armv7m) {}
             get_special_reg(lr(), new_cpu) == get_special_reg(lr(), old_cpu)
             &&
             get_special_reg(psr(), new_cpu) == get_special_reg(psr(), old_cpu)
+            &&
+            mode_is_thread_unprivileged(new_cpu.mode, new_cpu.control)
         }
 )]
 pub fn tock_control_flow_process_to_process(armv7m: &mut Armv7m, exception_num: u8) {

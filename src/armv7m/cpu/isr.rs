@@ -123,7 +123,6 @@ impl Armv7m {
         self.msr(SpecialRegister::Control, GPR::R0);
         self.isb(Some(IsbOpt::Sys));
         self.pseudo_ldr_special(SpecialRegister::lr(), BV32::from(0xFFFF_FFF9));
-        // self.bx(SpecialRegister::Lr);
         return self.get_value_from_special_reg(&SpecialRegister::lr());
     }
 }
