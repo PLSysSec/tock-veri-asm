@@ -266,10 +266,6 @@ flux_rs::defs! {
 }
 
 flux_rs::defs! {
-    fn bv32(val: int) -> bitvec<32> {
-        bv_int_to_bv32(val)
-    }
-
     fn int(val: bitvec<32>) -> int {
         bv_bv32_to_int(val)
     }
