@@ -20,7 +20,6 @@ impl Armv7m {
 
     #[flux_rs::sig(fn (self: &strg Armv7m[@cpu], BV32[@addr]) ensures self: Armv7m[cpu])]
     fn bx_write_pc(&mut self, address: BV32) {
-        // VTOCK TODO: Implement this with current mode and mode handler etc.
         // BXWritePC(bits(32) address)
         // if CurrentMode == Mode_Handler && address<31:28> == '1111' then
         //     ExceptionReturn(address<27:0>);

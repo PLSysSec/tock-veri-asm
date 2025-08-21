@@ -105,7 +105,6 @@ impl Armv7m {
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_svc_isr(old_cpu) }
     )]
     pub fn svc_isr(&mut self) -> BV32 {
-        // TODO: should really be a cmp & bne but tough to model that so using ite for now
         if self.get_value_from_special_reg(&SpecialRegister::lr()) == BV32::from(0xFFFF_FFF9) {
             return self.svc_isr_to_app();
         } else {

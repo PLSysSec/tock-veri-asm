@@ -36,7 +36,6 @@ impl Armv7m {
         // We already know d & n (register aboves) & that there is no S bit set so no SEE CMP
         // Also Rn == '1101' is the SP which we are not dealing with for now so no SEE SUB
 
-        // VTOCK TODO: Inspect ThumbExpandImm (same as ThumbExpandImm_C ignoring the carry flag)
         let val1 = self.get_value_from_general_reg(&value1);
         let res = val1 - value2;
         self.update_general_reg_with_b32(register, res);

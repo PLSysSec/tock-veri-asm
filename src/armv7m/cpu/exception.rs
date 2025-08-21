@@ -75,7 +75,6 @@ impl Armv7m {
         self.mem.write(frame_ptr + BV32::from(0x14), lr);
         // putting a dummy value for ret addr
         self.mem.write(frame_ptr + BV32::from(0x18), BV32::from(0));
-        // TODO: Real implementation skips bit 9
         self.mem.write(frame_ptr + BV32::from(0x1C), psr);
     }
 
@@ -107,8 +106,6 @@ impl Armv7m {
             }
     )]
     fn exception_taken(&mut self, exception_number: u8) {
-        // TODO: need to forget r0 - r3, r12 somehow
-
         // set exception num in psr
         self.psr = (self.psr & !BV32::from(0xff)) | BV32::from(exception_number as u32);
 
@@ -128,8 +125,6 @@ impl Armv7m {
         self.mode = CPUMode::Handler;
         self.control.spsel = false;
 
-        // TODO: There are other ops here but I don't think they
-        // matter
     }
 
     #[flux_rs::sig(
@@ -280,7 +275,6 @@ impl Armv7m {
     pub fn preempt(&mut self, exception_number: u8) {
         // stack
         self.exception_entry(exception_number);
-        // TODO: get rid of this assume - it should hold automagically
         assume(self.psr & BV32::from(0xff) == BV32::from(exception_number as u32));
         // call isr
         let ret_value = self.run_isr(exception_number);

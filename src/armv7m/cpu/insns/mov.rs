@@ -42,14 +42,11 @@ impl Armv7m {
         //
         // We already know d (register above), setflags is false because no S bit
 
-        // VTOCK TODO:
-        // Look at ThumbExpandImm_C
         self.update_general_reg_with_b32(register, value);
     }
 
     #[flux_rs::sig(
         fn (self: &strg Armv7m[@old_cpu], GPR[@reg], BV32[@val])
-            // TODO(VR): Flag Updates
             ensures self: Armv7m[{ general_regs: set_gpr(reg, old_cpu, val), ..old_cpu }]
     )]
     pub fn movs_imm(&mut self, register: GPR, value: BV32) {
@@ -60,11 +57,5 @@ impl Armv7m {
         //
         // We already know d (register above)
         self.update_general_reg_with_b32(register, value);
-        // let set_flags = !self.in_if_then_block();
-        // if set_flags {
-        //     // VTOCK TODO: Actually deal with negative values
-        //     self.unset_n_flag();
-        //     self.set_z_flag();
-        // }
     }
 }

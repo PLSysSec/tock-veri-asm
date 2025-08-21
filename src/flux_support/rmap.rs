@@ -15,7 +15,6 @@ pub struct Regs<K, V> {
     inner: std::collections::HashMap<K, V>,
 }
 
-#[flux_rs::generics(K as base, V as base)]
 impl<K, V> Regs<K, V> {
     #[flux_rs::trusted]
     #[flux_rs::sig(fn(self: &strg Regs<K,V>[@m], k: K, v: V) ensures self: Regs<K,V>[map_set(m.vals, k, v)])]

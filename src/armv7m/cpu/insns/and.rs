@@ -40,8 +40,6 @@ impl Armv7m {
         // We already know d & n (registers above), setflags is false because no S bit
         // So no SEE TST
 
-        // VTOCK TODO:
-        // Look at ThumbExpandImm_C
         let val1 = self.get_value_from_general_reg(&register);
         let res = val1 & value;
         self.update_general_reg_with_b32(register, res);

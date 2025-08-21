@@ -36,7 +36,6 @@ impl Armv7m {
         //      let base = Self::align(self.pc, 4);
         //      let addr = base + value;
         //      let data = self.mem.read(addr);
-        //      VTOCK TODO: Deal with PC update here
         //      self.update_general_reg_with_BV32(register, data);
         //
         // but since dealing with offsets to the PC isn't supported right

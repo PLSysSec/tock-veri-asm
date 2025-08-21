@@ -24,9 +24,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.15"
+version = "1.2.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c736e259eea577f443d5c86c304f9f4ae0295c43f3ba05c21f1d66b5f06001af"
+checksum = "3ee0f8803222ba5a7e2777dd72ca451868909b1ac410621b676adf07280e9b5f"
 dependencies = [
  "shlex",
 ]
@@ -40,7 +40,7 @@ checksum = "4445909572dbd556c457c849c4ca58623d84b27c8fff1e74b0b4227d8b90d17b"
 [[package]]
 name = "flux-attrs"
 version = "0.1.0"
-source = "git+https://github.com/flux-rs/flux.git#fa3a1eeacf684d9ac790fbb562af3d5d825fddf4"
+source = "git+https://github.com/flux-rs/flux.git#70a989bd9725281bae1a527d189d4518e99a0f47"
 dependencies = [
  "flux-attrs-impl",
 ]
@@ -48,7 +48,7 @@ dependencies = [
 [[package]]
 name = "flux-attrs-impl"
 version = "0.1.0"
-source = "git+https://github.com/flux-rs/flux.git#fa3a1eeacf684d9ac790fbb562af3d5d825fddf4"
+source = "git+https://github.com/flux-rs/flux.git#70a989bd9725281bae1a527d189d4518e99a0f47"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -58,31 +58,31 @@ dependencies = [
 [[package]]
 name = "flux-rs"
 version = "0.1.0"
-source = "git+https://github.com/flux-rs/flux.git#fa3a1eeacf684d9ac790fbb562af3d5d825fddf4"
+source = "git+https://github.com/flux-rs/flux.git#70a989bd9725281bae1a527d189d4518e99a0f47"
 dependencies = [
  "flux-attrs",
 ]
 
 [[package]]
 name = "libc"
-version = "0.2.169"
+version = "0.2.175"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5aba8db14291edd000dfcc4d620c7ebfb122c613afb886ca8803fa4e128a20a"
+checksum = "6a82ae493e598baaea5209805c49bbf2ea7de956d50d7da0da1164f9c6d28543"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.93"
+version = "1.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60946a68e5f9d28b0dc1c21bb8a97ee7d018a8b322fa57838ba31cc878e22d99"
+checksum = "89ae43fd86e4158d6db51ad8e2b80f313af9cc74f5c0e03ccb87de09998732de"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.38"
+version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e4dccaaaf89514f546c693ddc140f729f958c247918a13380cccc6078391acc"
+checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
 dependencies = [
  "proc-macro2",
 ]
@@ -95,9 +95,9 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "syn"
-version = "2.0.98"
+version = "2.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36147f1a48ae0ec2b5b3bc5b537d267457555a10dc06f3dbc8cb11ba3006d3b1"
+checksum = "ede7c438028d4436d71104916910f5bb611972c5cfd7f89b8300a8186e6fada6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -106,9 +106,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.17"
+version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00e2473a93778eb0bad35909dff6a10d28e63f792f16ed15e404fca9d5eeedbe"
+checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
 
 [[package]]
 name = "veri-asm"

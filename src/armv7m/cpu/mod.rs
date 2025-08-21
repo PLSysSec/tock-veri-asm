@@ -190,7 +190,6 @@ impl Armv7m {
                 self.pc = value;
             }
             SpecialRegister::Control => {
-                // TODO: This is only ok in privileged mode
                 let npriv_bit_set = Self::nth_bit_set(value, BV32::from(0));
                 self.control.npriv = npriv_bit_set;
                 if !self.mode_is_handler() {

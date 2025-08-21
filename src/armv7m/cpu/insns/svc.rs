@@ -12,7 +12,6 @@ impl Armv7m {
             ensures self: Armv7m { new_cpu: new_cpu == cpu_post_preempt(cpu, 11) }
     )]
     pub fn svc(&mut self, svc_num: u8) {
-        // TODO: Finish this instruction
         self.preempt(11);
     }
 }

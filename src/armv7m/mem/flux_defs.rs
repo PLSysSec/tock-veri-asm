@@ -228,7 +228,6 @@ use sys_tick_defs::*;
 flux_rs::defs! {
 
     fn is_valid_ram_addr(address: BV32) -> bool {
-        // TODO(VR): alignment?
         address >= RAM_START && address <= RAM_END
     }
 
@@ -266,10 +265,6 @@ flux_rs::defs! {
 }
 
 flux_rs::defs! {
-    fn bv32(val: int) -> bitvec<32> {
-        bv_int_to_bv32(val)
-    }
-
     fn int(val: bitvec<32>) -> int {
         bv_bv32_to_int(val)
     }

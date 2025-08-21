@@ -56,11 +56,6 @@ flux_rs::defs! {
 //   3c:   e000e200        .word   0xe000e200
 #[flux_rs::sig(
     fn (self: &strg Armv7m[@old_cpu])
-    // VTOCK TODO:
-    //
-    // Note we need to say that the IPSR is more than 16
-    // This is guaranteed by exception entry but we should
-    // probably formalize that somehow
     requires to_int(get_special_reg(ipsr(), old_cpu)) >= 16
     ensures self: Armv7m { new_cpu:
         get_gpr(r0(), new_cpu) == isr_r0(old_cpu)
@@ -398,8 +393,6 @@ impl Armv7m {
         //
         // We already know d (register above), setflags is false because no S bit
 
-        // VTOCK TODO:
-        // Look at ThumbExpandImm_C
         self.update_general_reg_with_b32(register, value);
     }
 }
